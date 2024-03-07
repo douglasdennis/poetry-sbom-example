@@ -44,7 +44,7 @@ jobs:
     
       - name: Generate SBOM
         run: |
-          poetry install cyclonedx-bom
+          pip install cyclonedx-bom
           make sbom
     
       - name: Store SBOM artifact
