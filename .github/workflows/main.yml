@@ -38,10 +38,12 @@ jobs:
     
       - name: Set up the environment
         uses: ./.github/actions/setup-poetry-env
+
+      - name: Install package
+        run: make install
     
       - name: Generate SBOM
         run: make sbom
-        shell: bash
     
       - name: Store SBOM artifact
         uses: actions/upload-artifact@v4
