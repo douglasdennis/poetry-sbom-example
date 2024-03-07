@@ -43,7 +43,9 @@ jobs:
         run: make install
     
       - name: Generate SBOM
-        run: make sbom
+        run: |
+          poetry install cyclonedx-bom
+          make sbom
     
       - name: Store SBOM artifact
         uses: actions/upload-artifact@v4
