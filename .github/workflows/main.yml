@@ -31,27 +31,31 @@ jobs:
       - name: Check out
         uses: actions/checkout@v3
       
-      - uses: actions/cache@v3
+      - name: Install node
+        uses: actions/setup-node@v4
         with:
-          path: ~/.cache/pre-commit
-          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
-    
-      - name: Set up the environment
-        uses: ./.github/actions/setup-poetry-env
+          node-version: "latest"
 
-      - name: Install package
-        run: make install
+      - name: Install cdxgen
+        run: npm install -g @cyclonedx/cdxgen
     
-      - name: Generate SBOM
+      - name: Generate SBOMs
         run: |
-          pip install cyclonedx-bom
-          make sbom
+          cdxgen -t python --profile research -o bom-research.json .
+          cdxgen -t python --profile appsec -o bom-appsec.json .
+          cdxgen -t python --profile generic -o bom.json .
+          cdxgen -t python --profile operational -o bom-operational.json .
+          cdxgen -t python --profile threat-modeling -o bom-threat-modeling.json .
+          cdxgen -t python --profile license-compliance -o bom-license-compliance.json .
+          mkdir boms
+          mv bom*.json boms
+          mv *.slices.json boms
     
-      - name: Store SBOM artifact
+      - name: Store SBOM artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: sbom
-          path: ./sbom.json
+          name: boms
+          path: ./boms
   
   tox:
     runs-on: ubuntu-latest
