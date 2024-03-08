@@ -32,17 +32,6 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v3
-      
-      - name: Set up the environment
-        uses: ./.github/actions/setup-poetry-env
-      
-      - name: Install node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "latest"
-
-      - name: Install cdxgen
-        run: npm install -g @cyclonedx/cdxgen
     
       - name: Generate SBOMs
         run: |
