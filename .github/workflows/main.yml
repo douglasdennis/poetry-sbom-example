@@ -27,6 +27,8 @@ jobs:
 
   sbom:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/cyclonedx/cdxgen
     steps:
       - name: Check out
         uses: actions/checkout@v3
