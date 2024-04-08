@@ -34,11 +34,6 @@ jobs:
       - name: Set up the environment
         uses: ./.github/actions/setup-poetry-env
       
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-      
       - name: Install node
         uses: actions/setup-node@v4
         with:
@@ -46,24 +41,31 @@ jobs:
 
       - name: Install cdxgen
         run: npm install -g @cyclonedx/cdxgen
-    
+
+      - name: Install depscan
+        run: pip install owasp-depscan
+
       - name: Generate SBOMs
         run: |
-          cdxgen -t python --profile research -o bom-research.json .
-          cdxgen -t python --profile appsec -o bom-appsec.json .
-          cdxgen -t python --profile generic -o bom.json .
-          cdxgen -t python --profile operational -o bom-operational.json .
-          cdxgen -t python --profile threat-modeling -o bom-threat-modeling.json .
-          cdxgen -t python --profile license-compliance -o bom-license-compliance.json .
-          mkdir boms
-          mv bom*.json boms
-          mv *.slices.json boms
-    
-      - name: Store SBOM artifacts
+          cdxgen -t python .
+
+      - name: Generate VDR
+        run: |
+          depscan --bom bom.json
+          mv ./reports/depscan-bom.json ./reports/depscan-bom.jsonl  # change extension to make file format more clear
+          mv ./bom.vdr.json ./reports/bom.vdr.json  # move vdr enriched sbom to make it easier to grab as an artifact
+
+      - name: Store SBOM Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: boms
-          path: ./boms
+          name: bom
+          path: ./bom.json
+
+      - name: Store VDR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vdr
+          path: ./reports
   
   tox:
     runs-on: ubuntu-latest
