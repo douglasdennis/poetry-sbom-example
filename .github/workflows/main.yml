@@ -53,7 +53,7 @@ jobs:
         run: |
           depscan --bom bom.json
           mv ./reports/depscan-bom.json ./reports/depscan-bom.jsonl  # change extension to make file format more clear
-          mv ./bom.vdr.json ./reports/bom.vdr.json  # move vdr enriched sbom to make it easier to grab as an artifact
+          # mv ./bom.vdr.json ./reports/bom.vdr.json  # move vdr enriched sbom to make it easier to grab as an artifact
 
       - name: Store SBOM Artifact
         uses: actions/upload-artifact@v4
